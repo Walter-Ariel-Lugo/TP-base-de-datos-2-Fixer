@@ -17,7 +17,7 @@
 
         <ul class="navbar-nav mx-auto">
             <li class="nav-item"><a class="nav-link" href="Default.aspx#que-es">¿Qué es Fixer?</a></li>
-            <li class="nav-item"><a class="nav-link" href="Servicios.aspx">Servicios</a></li>
+            <li class="nav-item"><a class="nav-link" href="Default.aspx#servicios">Servicios</a></li>
             <li class="nav-item"><a class="nav-link" href="Default.aspx#sumate">Sumate como fixer</a></li>
         </ul>
        <a href="Login.aspx" class="btn btn-light">Iniciar sesión</a>

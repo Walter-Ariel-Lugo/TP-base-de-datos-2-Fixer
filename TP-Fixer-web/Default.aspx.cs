@@ -13,6 +13,9 @@ namespace TP_Fixer_web
     {
         protected void Page_Load(object sender, EventArgs e)
         {
+
+     
+
             if (!IsPostBack)
             {
                 // Las categorías salen de la tabla TipoServicio
@@ -22,6 +25,40 @@ namespace TP_Fixer_web
                 rptCategorias.DataSource = categorias;
                 rptCategorias.DataBind();
             }
+        }
+        protected void rptCategorias_ItemCommand(object source, RepeaterCommandEventArgs e)
+        {
+            if (e.CommandName != "VerServicios")
+                return;
+
+            // 1. Si no inició sesión, lo mandamos al login
+            if (Session["Usuario"] == null)
+            {
+                Response.Redirect("Login.aspx", false);
+                return;
+            }
+
+            // 2. Qué categoría eligió (el CommandArgument de la tarjeta)
+            int idTipo = int.Parse(e.CommandArgument.ToString());
+
+            // 3. Nombre de la categoría para el título de la ventana
+            TipoServicioServicio tipoServicioServicio = new TipoServicioServicio();
+            TipoServicio categoria = tipoServicioServicio.Listar().FirstOrDefault(c => c.IDTipoServicio == idTipo);
+            lblCategoriaModal.Text = categoria != null ? categoria.Nombre : "Servicios";
+
+            // 4. Servicios de esa categoría, desde la base
+            ServicioServicio servicioServicio = new ServicioServicio();
+            List<Dominio.Servicio> servicios = servicioServicio.ListarPorTipo(idTipo);
+
+            rptServicios.DataSource = servicios;
+            rptServicios.DataBind();
+            lblSinServicios.Visible = (servicios.Count == 0);
+
+            // 5. Abrir la ventana emergente cuando la página termine de cargar
+            ClientScript.RegisterStartupScript(GetType(), "abrirModal",
+                "document.addEventListener('DOMContentLoaded', function () {" +
+                "  new bootstrap.Modal(document.getElementById('modalServicios')).show();" +
+                "});", true);
         }
     }
 }

@@ -98,6 +98,21 @@
 
                 <asp:Label ID="lblSinServicios" runat="server" Visible="false"
                     CssClass="text-secondary" Text="Todavía no hay servicios en esta categoría." />
+
+
+                <h6 class="fw-bold mt-4">Técnicos disponibles</h6>
+
+                <asp:Repeater ID="rptTecnicos" runat="server">
+                    <ItemTemplate>
+                        <div class="border-bottom py-2">
+                            <span class="fw-semibold"><%# Eval("Nombre") %></span>
+                            <span class="text-secondary small ms-2"><%# Eval("Telefono") %></span>
+                        </div>
+                    </ItemTemplate>
+                </asp:Repeater>
+
+<asp:Label ID="lblSinTecnicos" runat="server" Visible="false"
+    CssClass="text-secondary small" Text="No hay técnicos disponibles para esta categoría." />
             </div>
 
             <div class="modal-footer">

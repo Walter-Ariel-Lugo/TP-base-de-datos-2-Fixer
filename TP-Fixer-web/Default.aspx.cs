@@ -31,22 +31,22 @@ namespace TP_Fixer_web
             if (e.CommandName != "VerServicios")
                 return;
 
-            // 1. Si no inició sesión, lo mandamos al login
+            // Si no inició sesión, lo mandamos al login
             if (Session["Usuario"] == null)
             {
                 Response.Redirect("Login.aspx", false);
                 return;
             }
 
-            // 2. Qué categoría eligió (el CommandArgument de la tarjeta)
+            // Qué categoría eligió (el CommandArgument de la tarjeta)
             int idTipo = int.Parse(e.CommandArgument.ToString());
 
-            // 3. Nombre de la categoría para el título de la ventana
+            // Nombre de la categoría para el título de la ventana
             TipoServicioServicio tipoServicioServicio = new TipoServicioServicio();
             TipoServicio categoria = tipoServicioServicio.Listar().FirstOrDefault(c => c.IDTipoServicio == idTipo);
             lblCategoriaModal.Text = categoria != null ? categoria.Nombre : "Servicios";
 
-            // 4. Servicios de esa categoría, desde la base
+            // Servicios de esa categoría, desde la base
             ServicioServicio servicioServicio = new ServicioServicio();
             List<Dominio.Servicio> servicios = servicioServicio.ListarPorTipo(idTipo);
 
@@ -54,7 +54,15 @@ namespace TP_Fixer_web
             rptServicios.DataBind();
             lblSinServicios.Visible = (servicios.Count == 0);
 
-            // 5. Abrir la ventana emergente cuando la página termine de cargar
+            // Técnicos disponibles para esta categoría (usa vista_tecnicosDisponibles)
+            TecnicoNegocio tecnicoNegocio = new TecnicoNegocio();
+            List<Usuario> tecnicos = tecnicoNegocio.ListarDisponiblesPorTipo(idTipo);
+
+            rptTecnicos.DataSource = tecnicos;
+            rptTecnicos.DataBind();
+            lblSinTecnicos.Visible = (tecnicos.Count == 0);
+
+            // Abrir la ventana emergente cuando la página termine de cargar
             ClientScript.RegisterStartupScript(GetType(), "abrirModal",
                 "document.addEventListener('DOMContentLoaded', function () {" +
                 "  new bootstrap.Modal(document.getElementById('modalServicios')).show();" +

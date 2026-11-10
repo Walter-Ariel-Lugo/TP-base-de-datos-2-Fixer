@@ -19,5 +19,9 @@ namespace Dominio
         public DateTime? FechaFinalizacion { get; set; }
         public decimal PresupuestoTotal { get; set; }
         public int TiempoEstimadoTotal { get; set; }   // en minutos
+        public string Telefono { get; set; }        // del cliente
+        public string Direccion { get; set; }
+        public string Observaciones { get; set; }
+
     }
 }

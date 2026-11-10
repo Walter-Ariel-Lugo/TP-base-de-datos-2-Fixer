@@ -20,14 +20,14 @@ namespace TP_Fixer_web
             string mail = txtMail.Text.Trim();
             string password = txtPassword.Text;
 
-            // 1. Que no falte ningún dato
+            //  Que no falte ningún dato
             if (mail == "" || password == "")
             {
                 lblError.Text = "Completá el mail y la contraseña.";
                 return;
             }
 
-            // 2. Buscar el usuario en la base
+            //  Buscar el usuario en la base
             UsuarioNegocio negocio = new UsuarioNegocio();
             Usuario usuario = negocio.Login(mail, password);
 
@@ -37,9 +37,16 @@ namespace TP_Fixer_web
                 return;
             }
 
-            // 3. Guardar el usuario en la sesión y volver a la portada
+            //  Guardar el usuario en la sesión y volver a la portada
             Session["Usuario"] = usuario;
-            Response.Redirect("Default.aspx", false);
+
+            // Redirigir según el rol del usuario
+            if (usuario.Rol == 1)
+                Response.Redirect("Administracion.aspx", false);
+            else if (usuario.Rol == 3)
+                Response.Redirect("PanelTecnico.aspx", false);
+            else
+                Response.Redirect("Default.aspx", false);
         }
     }
 }

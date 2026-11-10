@@ -68,5 +68,58 @@ namespace Servicio
                 datos.CerrarConexion();
             }
         }
+        // Todos los técnicos, activos e inactivos, con cuántos servicios activos tienen
+        public List<Tecnico> ListarTodos()
+        {
+            List<Tecnico> lista = new List<Tecnico>();
+            AccesoDatos datos = new AccesoDatos();
+            try
+            {
+                datos.SetConsulta(@"SELECT U.IDUsuario, U.Nombre, U.Mail, U.Telefono, T.Activo, T.Disponible,
+                                   (SELECT COUNT(*) FROM TecnicoServicio TS
+                                    WHERE TS.IDTecnico = T.IDUsuario AND TS.Activo = 1) AS ServiciosActivos
+                            FROM Tecnico T
+                            INNER JOIN Usuarios U ON T.IDUsuario = U.IDUsuario
+                            ORDER BY U.Nombre");
+                datos.EjecutarLectura();
+
+                while (datos.Lector.Read())
+                {
+                    Tecnico t = new Tecnico();
+                    t.IDUsuario = (int)datos.Lector["IDUsuario"];
+                    t.Nombre = (string)datos.Lector["Nombre"];
+                    t.Mail = (string)datos.Lector["Mail"];
+                    t.Telefono = (string)datos.Lector["Telefono"];
+                    t.Activo = (bool)datos.Lector["Activo"];
+                    t.Disponible = (bool)datos.Lector["Disponible"];
+                    t.ServiciosActivos = (int)datos.Lector["ServiciosActivos"];
+                    t.Rol = 3;
+                    lista.Add(t);
+                }
+                return lista;
+            }
+            finally
+            {
+                datos.CerrarConexion();
+            }
+        }
+
+        // Da de baja un técnico.
+        // este DELETE NO borra. El trigger trg_eliminarTecnico lo convierte en Activo = 0,
+        // y eso dispara trg_desactivarServiciosTecnico, que desactiva sus servicios.
+        public void DarDeBaja(int idTecnico)
+        {
+            AccesoDatos datos = new AccesoDatos();
+            try
+            {
+                datos.SetConsulta("DELETE FROM Tecnico WHERE IDUsuario = @idTecnico");
+                datos.SetParametro("@idTecnico", idTecnico);
+                datos.EjecutarAccion();
+            }
+            finally
+            {
+                datos.CerrarConexion();
+            }
+        }
     }
 }

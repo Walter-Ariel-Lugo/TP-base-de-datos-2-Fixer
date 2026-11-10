@@ -123,5 +123,38 @@ namespace Servicio
                 datos.CerrarConexion();
             }
         }
+        // Órdenes de un técnico en un estado (usa el SP de reporte sp_ordenesPorTecnico)
+        public List<OrdenTrabajo> ListarPorTecnico(int idTecnico, string estado)
+        {
+            List<OrdenTrabajo> lista = new List<OrdenTrabajo>();
+            AccesoDatos datos = new AccesoDatos();
+            try
+            {
+                datos.SetProcedimiento("sp_ordenesPorTecnico");
+                datos.SetParametro("@IdTecnico", idTecnico);
+                datos.SetParametro("@Estado", estado);
+                datos.EjecutarLectura();
+
+                while (datos.Lector.Read())
+                {
+                    OrdenTrabajo o = new OrdenTrabajo();
+                    o.IDOrdenTrabajo = (int)datos.Lector["IDOrdenTrabajo"];
+                    o.Cliente = (string)datos.Lector["Cliente"];
+                    o.Telefono = (string)datos.Lector["Telefono"];
+                    o.Direccion = datos.Lector["Direccion"] as string;
+                    o.FechaProgramada = datos.Lector["FechaProgramada"] as DateTime?;
+                    o.Estado = (string)datos.Lector["Estado"];
+                    o.PresupuestoTotal = (decimal)datos.Lector["PresupuestoTotal"];
+                    o.TiempoEstimadoTotal = (int)datos.Lector["TiempoEstimadoTotal"];
+                    o.Observaciones = datos.Lector["Observaciones"] as string;
+                    lista.Add(o);
+                }
+                return lista;
+            }
+            finally
+            {
+                datos.CerrarConexion();
+            }
+        }
     }
 }

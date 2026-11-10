@@ -38,6 +38,26 @@ namespace Servicio
         {
             comando.Parameters.AddWithValue(nombre, valor ?? DBNull.Value);
         }
+        // Para llamar a un stored procedure por su nombre
+        public void SetProcedimiento(string nombre)
+        {
+            comando.CommandType = CommandType.StoredProcedure;
+            comando.CommandText = nombre;
+        }
+
+        // INSERT, UPDATE, DELETE o un SP que modifica datos
+        public int EjecutarAccion()
+        {
+            conexion.Open();
+            return comando.ExecuteNonQuery();
+        }
+
+        // Consulta que devuelve un solo valor (un COUNT o el ID de una orden nueva)
+        public object EjecutarEscalar()
+        {
+            conexion.Open();
+            return comando.ExecuteScalar();
+        }
 
         // Ejecuta un SELECT que devuelve filas
         public void EjecutarLectura()

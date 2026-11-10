@@ -1,5 +1,11 @@
 ﻿<%@ Page Title="" Language="C#" MasterPageFile="~/Site.master" AutoEventWireup="true" CodeBehind="Default.aspx.cs" Inherits="TP_Fixer_web.Default" %>
 <asp:Content ID="Content1" ContentPlaceHolderID="MainContent" runat="server">
+
+    <asp:Panel ID="pnlConfirmacion" runat="server" Visible="false" CssClass="container mt-4">
+    <div class="alert alert-success mb-0">
+        <asp:Label ID="lblConfirmacion" runat="server" />
+    </div>
+</asp:Panel>
  
 <%--    ¿QUÉ ES FIXER?    --%>
 <section id="que-es" class="bg-primary text-white py-5">
@@ -81,42 +87,61 @@
             </div>
 
             <div class="modal-body">
+
+                <%-- 1. Servicios: casilla + cantidad --%>
+                <h6 class="fw-bold">Elegí los servicios</h6>
                 <asp:Repeater ID="rptServicios" runat="server">
                     <ItemTemplate>
                         <div class="d-flex justify-content-between align-items-center border-bottom py-3">
                             <div>
-                                <div class="fw-semibold"><%# Eval("Nombre") %></div>
+                                <asp:HiddenField ID="hfIdServicio" runat="server" Value='<%# Eval("IDServicio") %>' />
+                                <asp:CheckBox ID="chkServicio" runat="server" />
+                                <span class="fw-semibold ms-1"><%# Eval("Nombre") %></span>
                                 <div class="text-secondary small"><%# Eval("Descripcion") %></div>
                             </div>
                             <div class="text-end">
                                 <div class="fw-bold text-primary">$<%# Eval("Precio", "{0:N0}") %></div>
                                 <div class="text-secondary small"><%# Eval("TiempoPromedio") %> min</div>
+                                <asp:TextBox ID="txtCantidad" runat="server" TextMode="Number" Text="1"
+                                    CssClass="form-control form-control-sm mt-1" Width="70px" />
                             </div>
                         </div>
                     </ItemTemplate>
                 </asp:Repeater>
-
                 <asp:Label ID="lblSinServicios" runat="server" Visible="false"
                     CssClass="text-secondary" Text="Todavía no hay servicios en esta categoría." />
 
+                <%-- 2. Técnico: se elige uno --%>
+                <h6 class="fw-bold mt-4">Elegí un técnico</h6>
+                <asp:RadioButtonList ID="rblTecnicos" runat="server"
+                    DataTextField="Nombre" DataValueField="IDUsuario"
+                    RepeatLayout="UnorderedList" CssClass="list-unstyled" />
+                <asp:Label ID="lblSinTecnicos" runat="server" Visible="false"
+                    CssClass="text-secondary small" Text="No hay técnicos disponibles para esta categoría." />
 
-                <h6 class="fw-bold mt-4">Técnicos disponibles</h6>
+                <%-- 3. Datos del trabajo --%>
+                <h6 class="fw-bold mt-4">Datos del trabajo</h6>
+                <div class="mb-2">
+                    <label class="form-label small">Dirección</label>
+                    <asp:TextBox ID="txtDireccion" runat="server" CssClass="form-control" />
+                </div>
+                <div class="mb-2">
+                    <label class="form-label small">Fecha programada</label>
+                    <asp:TextBox ID="txtFecha" runat="server" TextMode="Date" CssClass="form-control" />
+                </div>
+                <div class="mb-2">
+                    <label class="form-label small">Observaciones (opcional)</label>
+                    <asp:TextBox ID="txtObservaciones" runat="server" CssClass="form-control"
+                        placeholder="Ej.: tocar timbre 2B" />
+                </div>
 
-                <asp:Repeater ID="rptTecnicos" runat="server">
-                    <ItemTemplate>
-                        <div class="border-bottom py-2">
-                            <span class="fw-semibold"><%# Eval("Nombre") %></span>
-                            <span class="text-secondary small ms-2"><%# Eval("Telefono") %></span>
-                        </div>
-                    </ItemTemplate>
-                </asp:Repeater>
-
-<asp:Label ID="lblSinTecnicos" runat="server" Visible="false"
-    CssClass="text-secondary small" Text="No hay técnicos disponibles para esta categoría." />
+                <asp:Label ID="lblErrorPedido" runat="server" CssClass="text-danger d-block mt-2" />
             </div>
 
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary rounded-pill" data-bs-dismiss="modal">Cerrar</button>
+                <button type="button" class="btn btn-secondary rounded-pill" data-bs-dismiss="modal">Cancelar</button>
+                <asp:Button ID="btnConfirmar" runat="server" Text="Confirmar pedido"
+                    CssClass="btn btn-primary rounded-pill" OnClick="btnConfirmar_Click" />
             </div>
 
         </div>

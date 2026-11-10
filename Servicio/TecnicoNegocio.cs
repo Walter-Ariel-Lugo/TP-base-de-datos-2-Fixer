@@ -47,5 +47,26 @@ namespace Servicio
                 datos.CerrarConexion();
             }
         }
+
+        // true si el técnico tiene asignado ese servicio (y la asignación está activa)
+        public bool HaceServicio(int idTecnico, int idServicio)
+        {
+            AccesoDatos datos = new AccesoDatos();
+            try
+            {
+                datos.SetConsulta(@"SELECT COUNT(*) FROM TecnicoServicio
+                            WHERE IDTecnico = @idTecnico
+                              AND IDServicio = @idServicio
+                              AND Activo = 1");
+                datos.SetParametro("@idTecnico", idTecnico);
+                datos.SetParametro("@idServicio", idServicio);
+                int cantidad = (int)datos.EjecutarEscalar();
+                return cantidad > 0;
+            }
+            finally
+            {
+                datos.CerrarConexion();
+            }
+        }
     }
 }

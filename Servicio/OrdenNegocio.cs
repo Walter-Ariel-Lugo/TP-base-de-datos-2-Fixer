@@ -83,5 +83,45 @@ namespace Servicio
                 datos.CerrarConexion();
             }
         }
+
+        // Órdenes de un cliente, más nuevas primero (usa vista_ordenesDetalle)
+        public List<OrdenTrabajo> ListarPorCliente(int idCliente)
+        {
+            List<OrdenTrabajo> lista = new List<OrdenTrabajo>();
+            AccesoDatos datos = new AccesoDatos();
+            try
+            {
+                datos.SetConsulta(@"SELECT IDOrdenTrabajo, IDCliente, Cliente, IDTecnico, Tecnico, Estado,
+                                   FechaSolicitud, FechaProgramada, FechaFinalizacion,
+                                   PresupuestoTotal, TiempoEstimadoTotal
+                            FROM vista_ordenesDetalle
+                            WHERE IDCliente = @idCliente
+                            ORDER BY FechaSolicitud DESC");
+                datos.SetParametro("@idCliente", idCliente);
+                datos.EjecutarLectura();
+
+                while (datos.Lector.Read())
+                {
+                    OrdenTrabajo o = new OrdenTrabajo();
+                    o.IDOrdenTrabajo = (int)datos.Lector["IDOrdenTrabajo"];
+                    o.IDCliente = (int)datos.Lector["IDCliente"];
+                    o.Cliente = (string)datos.Lector["Cliente"];
+                    o.IDTecnico = (int)datos.Lector["IDTecnico"];
+                    o.Tecnico = (string)datos.Lector["Tecnico"];
+                    o.Estado = (string)datos.Lector["Estado"];
+                    o.FechaSolicitud = (DateTime)datos.Lector["FechaSolicitud"];
+                    o.FechaProgramada = datos.Lector["FechaProgramada"] as DateTime?;
+                    o.FechaFinalizacion = datos.Lector["FechaFinalizacion"] as DateTime?;
+                    o.PresupuestoTotal = (decimal)datos.Lector["PresupuestoTotal"];
+                    o.TiempoEstimadoTotal = (int)datos.Lector["TiempoEstimadoTotal"];
+                    lista.Add(o);
+                }
+                return lista;
+            }
+            finally
+            {
+                datos.CerrarConexion();
+            }
+        }
     }
 }

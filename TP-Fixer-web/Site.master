@@ -25,8 +25,9 @@
 
     <a href="Login.aspx" class="btn btn-primary rounded-pill px-4">Iniciar sesión</a>
 
-<% } else { %>
+        <% } else { %>
 
+    <a href="MisOrdenes.aspx" class="nav-link d-inline me-3 fw-semibold">Mis órdenes</a>
     <span class="fw-semibold me-3">Hola, <%: ((Dominio.Usuario)Session["Usuario"]).Nombre %></span>
     <a href="Logout.aspx" class="btn btn-outline-primary rounded-pill px-4">Cerrar sesión</a>
 

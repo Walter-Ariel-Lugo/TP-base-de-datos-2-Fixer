@@ -44,5 +44,44 @@ namespace Servicio
                 datos.CerrarConexion();
             }
         }
+        // Todos los clientes, con cuántas órdenes hicieron y cuánto contrataron
+        public List<Cliente> ListarClientes()
+        {
+            List<Cliente> lista = new List<Cliente>();
+            AccesoDatos datos = new AccesoDatos();
+            try
+            {
+                datos.SetConsulta(@"SELECT U.IDUsuario, U.Nombre, U.Mail, U.Telefono,
+                                   (SELECT COUNT(*)
+                                    FROM OrdenTrabajo OT
+                                    WHERE OT.IDCliente = U.IDUsuario) AS CantidadOrdenes,
+                                   (SELECT ISNULL(SUM(OT.PresupuestoTotal), 0)
+                                    FROM OrdenTrabajo OT
+                                    WHERE OT.IDCliente = U.IDUsuario
+                                      AND OT.Estado <> 'Cancelada') AS TotalContratado
+                            FROM Usuarios U
+                            WHERE U.Rol = 2
+                            ORDER BY U.Nombre");
+                datos.EjecutarLectura();
+
+                while (datos.Lector.Read())
+                {
+                    Cliente c = new Cliente();
+                    c.IDUsuario = (int)datos.Lector["IDUsuario"];
+                    c.Nombre = (string)datos.Lector["Nombre"];
+                    c.Mail = (string)datos.Lector["Mail"];
+                    c.Telefono = (string)datos.Lector["Telefono"];
+                    c.CantidadOrdenes = (int)datos.Lector["CantidadOrdenes"];
+                    c.TotalContratado = (decimal)datos.Lector["TotalContratado"];
+                    c.Rol = 2;
+                    lista.Add(c);
+                }
+                return lista;
+            }
+            finally
+            {
+                datos.CerrarConexion();
+            }
+        }
     }
 }

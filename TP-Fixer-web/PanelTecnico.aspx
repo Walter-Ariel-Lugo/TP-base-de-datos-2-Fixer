@@ -1,6 +1,19 @@
 ﻿<%@ Page Title="" Language="C#" MasterPageFile="~/Site.master" AutoEventWireup="true" CodeBehind="PanelTecnico.aspx.cs" Inherits="TP_Fixer_web.PanelTecnico" %>
 <asp:Content ID="Content1" ContentPlaceHolderID="MainContent" runat="server">
     <div class="container py-5">
+        <div class="card border-0 rounded-4 shadow-sm p-4 mb-4">
+    <div class="d-flex justify-content-between align-items-center">
+        <div>
+            <div class="small text-secondary">Tu estado para recibir trabajos</div>
+            <asp:Label ID="lblDisponibilidad" runat="server" CssClass="fs-5 fw-bold" />
+        </div>
+        <asp:Button ID="btnDisponibilidad" runat="server"
+            CssClass="btn rounded-pill" OnClick="btnDisponibilidad_Click" />
+    </div>
+    <div class="small text-secondary mt-2">
+        Si estás no disponible, no te vamos a proponer a los clientes.
+    </div>
+</div>
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h1 class="h3 fw-bold mb-0">Mis trabajos</h1>
 

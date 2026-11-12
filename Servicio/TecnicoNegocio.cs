@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Dominio;
+using Utils;
 
 namespace Servicio
 {
@@ -114,6 +115,118 @@ namespace Servicio
             {
                 datos.SetConsulta("DELETE FROM Tecnico WHERE IDUsuario = @idTecnico");
                 datos.SetParametro("@idTecnico", idTecnico);
+                datos.EjecutarAccion();
+            }
+            finally
+            {
+                datos.CerrarConexion();
+            }
+        }
+
+        // ¿El técnico está disponible para recibir trabajos?
+        public bool EstaDisponible(int idTecnico)
+        {
+            AccesoDatos datos = new AccesoDatos();
+            try
+            {
+                datos.SetConsulta("SELECT Disponible FROM Tecnico WHERE IDUsuario = @idTecnico");
+                datos.SetParametro("@idTecnico", idTecnico);
+                return (bool)datos.EjecutarEscalar();
+            }
+            finally
+            {
+                datos.CerrarConexion();
+            }
+        }
+
+        // El técnico se marca disponible (true) o no disponible (false)
+        public void CambiarDisponibilidad(int idTecnico, bool disponible)
+        {
+            AccesoDatos datos = new AccesoDatos();
+            try
+            {
+                datos.SetConsulta("UPDATE Tecnico SET Disponible = @disponible WHERE IDUsuario = @idTecnico");
+                datos.SetParametro("@disponible", disponible);
+                datos.SetParametro("@idTecnico", idTecnico);
+                datos.EjecutarAccion();
+            }
+            finally
+            {
+                datos.CerrarConexion();
+            }
+        }
+
+        // Crea el usuario y su fila de técnico con sp_crearTecnico.
+        // Devuelve el ID nuevo, -1 si el mail ya existe o -2 si hubo un error.
+        public int Crear(string nombre, string mail, string password, string telefono)
+        {
+            AccesoDatos datos = new AccesoDatos();
+            try
+            {
+                datos.SetProcedimiento("sp_crearTecnico");
+                datos.SetParametro("@Nombre", nombre);
+                datos.SetParametro("@Mail", mail);
+                datos.SetParametro("@Pass", Seguridad.Encriptar(password));
+                datos.SetParametro("@Telefono", telefono);
+                return Convert.ToInt32(datos.EjecutarEscalar());
+            }
+            finally
+            {
+                datos.CerrarConexion();
+            }
+        }
+
+        // Asigna un servicio a un técnico
+        public void AsignarServicio(int idTecnico, int idServicio)
+        {
+            AccesoDatos datos = new AccesoDatos();
+            try
+            {
+                datos.SetConsulta("INSERT INTO TecnicoServicio (IDTecnico, IDServicio) VALUES (@idTecnico, @idServicio)");
+                datos.SetParametro("@idTecnico", idTecnico);
+                datos.SetParametro("@idServicio", idServicio);
+                datos.EjecutarAccion();
+            }
+            finally
+            {
+                datos.CerrarConexion();
+            }
+        }
+
+        // IDs de los servicios que el técnico tiene activos
+        public List<int> ServiciosAsignados(int idTecnico)
+        {
+            List<int> ids = new List<int>();
+            AccesoDatos datos = new AccesoDatos();
+            try
+            {
+                datos.SetConsulta(@"SELECT IDServicio FROM TecnicoServicio
+                            WHERE IDTecnico = @idTecnico AND Activo = 1");
+                datos.SetParametro("@idTecnico", idTecnico);
+                datos.EjecutarLectura();
+
+                while (datos.Lector.Read())
+                {
+                    ids.Add((int)datos.Lector["IDServicio"]);
+                }
+                return ids;
+            }
+            finally
+            {
+                datos.CerrarConexion();
+            }
+        }
+
+        // Activa (o crea) o desactiva la asignación de un servicio (usa sp_actualizarServicioTecnico)
+        public void ActualizarServicio(int idTecnico, int idServicio, bool activo)
+        {
+            AccesoDatos datos = new AccesoDatos();
+            try
+            {
+                datos.SetProcedimiento("sp_actualizarServicioTecnico");
+                datos.SetParametro("@IdTecnico", idTecnico);
+                datos.SetParametro("@IdServicio", idServicio);
+                datos.SetParametro("@Activo", activo);
                 datos.EjecutarAccion();
             }
             finally

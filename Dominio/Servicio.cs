@@ -15,5 +15,6 @@ namespace Dominio
         public decimal Precio { get; set; }
         public int TiempoPromedio { get; set; }
         public bool Activo { get; set; }
+        public int CantidadTecnicos { get; set; }   // técnicos activos que hacen el servicio
     }
 }

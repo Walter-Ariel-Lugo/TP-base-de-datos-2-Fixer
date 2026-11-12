@@ -15,6 +15,24 @@ namespace TP_Fixer_web
     {
 
         /// <summary>
+        /// Control lblDisponibilidad.
+        /// </summary>
+        /// <remarks>
+        /// Campo generado automáticamente.
+        /// Para modificarlo, mueva la declaración del campo del archivo del diseñador al archivo de código subyacente.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblDisponibilidad;
+
+        /// <summary>
+        /// Control btnDisponibilidad.
+        /// </summary>
+        /// <remarks>
+        /// Campo generado automáticamente.
+        /// Para modificarlo, mueva la declaración del campo del archivo del diseñador al archivo de código subyacente.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Button btnDisponibilidad;
+
+        /// <summary>
         /// Control ddlEstado.
         /// </summary>
         /// <remarks>

@@ -24,6 +24,7 @@ namespace TP_Fixer_web
             if (!IsPostBack)
             {
                 CargarTrabajos();
+                MostrarDisponibilidad();   // ← nueva
             }
         }
 
@@ -42,6 +43,41 @@ namespace TP_Fixer_web
             rptTrabajos.DataSource = trabajos;
             rptTrabajos.DataBind();
             lblSinTrabajos.Visible = (trabajos.Count == 0);
+        }
+
+        // Muestra si el técnico está disponible y prepara el botón para cambiarlo
+        private void MostrarDisponibilidad()
+        {
+            Usuario usuario = (Usuario)Session["Usuario"];
+            TecnicoNegocio tecnicoNegocio = new TecnicoNegocio();
+            bool disponible = tecnicoNegocio.EstaDisponible(usuario.IDUsuario);
+
+            if (disponible)
+            {
+                lblDisponibilidad.Text = "Disponible";
+                lblDisponibilidad.CssClass = "fs-5 fw-bold text-success";
+                btnDisponibilidad.Text = "Marcarme como no disponible";
+                btnDisponibilidad.CssClass = "btn btn-outline-secondary rounded-pill";
+            }
+            else
+            {
+                lblDisponibilidad.Text = "No disponible";
+                lblDisponibilidad.CssClass = "fs-5 fw-bold text-secondary";
+                btnDisponibilidad.Text = "Marcarme como disponible";
+                btnDisponibilidad.CssClass = "btn btn-success rounded-pill";
+            }
+        }
+
+        // Al apretar el botón: invierte la disponibilidad
+        protected void btnDisponibilidad_Click(object sender, EventArgs e)
+        {
+            Usuario usuario = (Usuario)Session["Usuario"];
+            TecnicoNegocio tecnicoNegocio = new TecnicoNegocio();
+
+            bool disponible = tecnicoNegocio.EstaDisponible(usuario.IDUsuario);
+            tecnicoNegocio.CambiarDisponibilidad(usuario.IDUsuario, !disponible);
+
+            MostrarDisponibilidad();
         }
     }
 }

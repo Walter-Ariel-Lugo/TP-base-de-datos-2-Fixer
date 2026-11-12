@@ -29,5 +29,23 @@ namespace Servicio
                 datos.CerrarConexion();
             }
         }
+
+        // Crea una categoría nueva
+        public void Agregar(string nombre, string descripcion)
+        {
+            AccesoDatos datos = new AccesoDatos();
+            try
+            {
+                datos.SetConsulta("INSERT INTO TipoServicio (Nombre, Descripcion) VALUES (@nombre, @descripcion)");
+                datos.SetParametro("@nombre", nombre);
+                datos.SetParametro("@descripcion", descripcion);
+                datos.EjecutarAccion();
+            }
+            finally
+            {
+                datos.CerrarConexion();
+            }
+        }
     }
+
 }

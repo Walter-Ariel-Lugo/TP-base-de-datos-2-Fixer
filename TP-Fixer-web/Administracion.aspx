@@ -95,7 +95,11 @@
                 </HeaderTemplate>
                 <ItemTemplate>
                             <tr>
-                                <td class="fw-semibold"><%# Eval("Nombre") %></td>
+                                <td class="fw-semibold">
+                                    <a href='PanelTecnico.aspx?id=<%# Eval("IDUsuario") %>' class="text-decoration-none">
+                                        <%# Eval("Nombre") %>
+                                    </a>
+                                </td>
                                 <td><%# Eval("Mail") %></td>
                                 <td><%# Eval("Telefono") %></td>
                                 <td>

@@ -156,5 +156,26 @@ namespace Servicio
                 datos.CerrarConexion();
             }
         }
+
+        // Cambia el estado de una orden y agrega la observación del técnico (sp_cambiarEstadoOrden)
+        // Devuelve 0 si salió bien, -1 si la orden no es del técnico, -2 si el cambio no está permitido
+        public int CambiarEstado(int idOrden, int idTecnico, string estado, string observacion)
+        {
+            AccesoDatos datos = new AccesoDatos();
+            try
+            {
+                datos.SetProcedimiento("sp_cambiarEstadoOrden");
+                datos.SetParametro("@IdOrden", idOrden);
+                datos.SetParametro("@IdTecnico", idTecnico);
+                datos.SetParametro("@Estado", estado);
+                datos.SetParametro("@Observacion", observacion);
+
+                return Convert.ToInt32(datos.EjecutarEscalar());
+            }
+            finally
+            {
+                datos.CerrarConexion();
+            }
+        }
     }
 }

@@ -113,7 +113,7 @@ GO
 
 CREATE PROCEDURE sp_ordenesPorTecnico
     @IdTecnico INT,
-    @Estado VARCHAR(20)
+    @Estado VARCHAR(20) = NULL      -- NULL = todos los estados
 AS
 BEGIN
     SELECT
@@ -129,7 +129,7 @@ BEGIN
     FROM OrdenTrabajo AS OT
     INNER JOIN Usuarios AS Cli ON OT.IDCliente = Cli.IDUsuario
     WHERE OT.IDTecnico = @IdTecnico
-      AND OT.Estado = @Estado
+      AND (@Estado IS NULL OR OT.Estado = @Estado)
     ORDER BY OT.FechaProgramada;
 END
 GO
@@ -289,6 +289,81 @@ BEGIN
         INSERT INTO TecnicoServicio (IDTecnico, IDServicio, Activo)
         VALUES (@IdTecnico, @IdServicio, 1);
     END
+END
+GO
+
+-- PROCEDIMIENTO sp_RegistrarCliente: el cliente de de alta una cuenta 
+
+IF OBJECT_ID('sp_registrarCliente') IS NOT NULL
+    DROP PROCEDURE sp_registrarCliente
+GO
+
+CREATE PROCEDURE sp_registrarCliente
+    @Nombre   VARCHAR(50),
+    @Mail     VARCHAR(100),
+    @Pass     VARCHAR(64),
+    @Telefono VARCHAR(50)
+AS
+BEGIN
+    IF EXISTS (SELECT 1 FROM Usuarios WHERE Mail = @Mail)
+    BEGIN
+        SELECT -1
+        RETURN
+    END
+
+    INSERT INTO Usuarios (Rol, Nombre, Mail, Pass, Telefono)
+    VALUES (2, @Nombre, @Mail, @Pass, @Telefono)
+
+    SELECT CAST(SCOPE_IDENTITY() AS INT)
+END
+GO
+
+IF OBJECT_ID('sp_cambiarEstadoOrden', 'P') IS NOT NULL
+    DROP PROCEDURE sp_cambiarEstadoOrden;
+GO
+
+-- PROCEDIMIENTO sp_cambiarEstadoOrden: el técnico cambia el estado de una de sus órdenes (Pendiente ? Iniciada/Cancelada,
+-- Iniciada ? Finalizada/Cancelada) y puede agregar una observación. Al finalizar guarda la fecha de finalización.
+
+CREATE PROCEDURE sp_cambiarEstadoOrden
+    @IdOrden     INT,
+    @IdTecnico   INT,
+    @Estado      VARCHAR(20),
+    @Observacion VARCHAR(200)
+AS
+BEGIN
+    DECLARE @EstadoActual VARCHAR(20)
+
+    -- La orden tiene que existir y ser de este técnico
+    SELECT @EstadoActual = Estado
+    FROM OrdenTrabajo
+    WHERE IDOrdenTrabajo = @IdOrden AND IDTecnico = @IdTecnico
+
+    IF @EstadoActual IS NULL
+    BEGIN
+        SELECT -1       -- no existe o no es suya
+        RETURN
+    END
+
+    -- Solo los cambios permitidos (o quedarse en el mismo estado para agregar una observación)
+    IF NOT (   @Estado = @EstadoActual
+            OR (@EstadoActual = 'Pendiente' AND @Estado IN ('Iniciada', 'Cancelada'))
+            OR (@EstadoActual = 'Iniciada'  AND @Estado IN ('Finalizada', 'Cancelada')) )
+    BEGIN
+        SELECT -2       -- cambio de estado no permitido
+        RETURN
+    END
+
+    UPDATE OrdenTrabajo
+    SET Estado = @Estado,
+        FechaFinalizacion = CASE WHEN @Estado = 'Finalizada' THEN GETDATE()
+                                 ELSE FechaFinalizacion END,
+        Observaciones = CASE WHEN @Observacion IS NULL OR @Observacion = '' THEN Observaciones
+                             ELSE LEFT(ISNULL(Observaciones + ' | ', '') + 'Técnico: ' + @Observacion, 255)
+                        END
+    WHERE IDOrdenTrabajo = @IdOrden
+
+    SELECT 0            -- todo bien
 END
 GO
 

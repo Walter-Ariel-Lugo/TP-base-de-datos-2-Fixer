@@ -44,6 +44,26 @@ namespace Servicio
                 datos.CerrarConexion();
             }
         }
+
+        // Registra un cliente nuevo. Devuelve su ID, o -1 si el mail ya existe
+        public int RegistrarCliente(string nombre, string mail, string password, string telefono)
+        {
+            AccesoDatos datos = new AccesoDatos();
+            try
+            {
+                datos.SetProcedimiento("sp_registrarCliente");
+                datos.SetParametro("@Nombre", nombre);
+                datos.SetParametro("@Mail", mail);
+                datos.SetParametro("@Pass", Seguridad.Encriptar(password));
+                datos.SetParametro("@Telefono", telefono);
+                return Convert.ToInt32(datos.EjecutarEscalar());
+            }
+            finally
+            {
+                datos.CerrarConexion();
+            }
+        }
+
         // Todos los clientes, con cuántas órdenes hicieron y cuánto contrataron
         public List<Cliente> ListarClientes()
         {

@@ -74,6 +74,7 @@
     <Content Include="MisOrdenes.aspx" />
     <Content Include="PanelTecnico.aspx" />
     <Content Include="PruebaConexion.aspx" />
+    <Content Include="Registro.aspx" />
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
@@ -126,6 +127,13 @@
     </Compile>
     <Compile Include="PruebaConexion.aspx.designer.cs">
       <DependentUpon>PruebaConexion.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Registro.aspx.cs">
+      <DependentUpon>Registro.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Registro.aspx.designer.cs">
+      <DependentUpon>Registro.aspx</DependentUpon>
     </Compile>
   </ItemGroup>
   <ItemGroup>

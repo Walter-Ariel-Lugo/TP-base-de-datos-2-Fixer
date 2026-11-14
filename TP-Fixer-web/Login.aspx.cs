@@ -13,7 +13,12 @@ namespace TP_Fixer_web
     {
         protected void Page_Load(object sender, EventArgs e)
         {
-
+            // Si viene de intentar contratar: mostrar el aviso y pasarle la señal a Registro
+            if (Request.QueryString["contratar"] != null)
+            {
+                pnlAvisoContratar.Visible = true;
+                lnkRegistro.NavigateUrl = "Registro.aspx?contratar=1";
+            }
         }
         protected void btnIngresar_Click(object sender, EventArgs e)
         {
@@ -45,6 +50,8 @@ namespace TP_Fixer_web
                 Response.Redirect("Administracion.aspx", false);
             else if (usuario.Rol == 3)
                 Response.Redirect("PanelTecnico.aspx", false);
+            else if (Request.QueryString["contratar"] != null)
+                Response.Redirect("Default.aspx#servicios", false);   // vuelve a elegir la categoría
             else
                 Response.Redirect("Default.aspx", false);
         }

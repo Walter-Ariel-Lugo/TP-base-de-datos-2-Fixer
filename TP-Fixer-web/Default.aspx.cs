@@ -29,11 +29,14 @@ namespace TP_Fixer_web
             if (e.CommandName != "VerServicios")
                 return;
 
-            if (Session["Usuario"] == null)
+             Usuario usuario = Session["Usuario"] as Usuario;
+            if (usuario == null)
             {
-                Response.Redirect("Login.aspx", false);
+                Response.Redirect("Login.aspx?contratar=1", false);
                 return;
             }
+            if (usuario.Rol != 2)
+                return;     // el admin y los técnicos no contratan servicios
 
             int idTipo = int.Parse(e.CommandArgument.ToString());
 
@@ -69,7 +72,7 @@ namespace TP_Fixer_web
         protected void btnConfirmar_Click(object sender, EventArgs e)
         {
             Usuario usuario = Session["Usuario"] as Usuario;
-            if (usuario == null)
+            if (usuario == null || usuario.Rol != 2)
             {
                 Response.Redirect("Login.aspx", false);
                 return;

@@ -4,6 +4,10 @@
   <div class="container py-5" style="max-width: 420px;">
     <h1 class="h3 fw-bold mb-4">Iniciar sesión</h1>
 
+          <asp:Panel ID="pnlAvisoContratar" runat="server" CssClass="alert alert-info" Visible="false">
+        Para contratar un servicio iniciá sesión o registrate.
+    </asp:Panel>
+
     <div class="mb-3">
         <label for="txtMail" class="form-label">Mail</label>
         <asp:TextBox ID="txtMail" runat="server" TextMode="Email" CssClass="form-control" />
@@ -18,6 +22,11 @@
 
     <asp:Button ID="btnIngresar" runat="server" Text="Ingresar"
         CssClass="btn btn-primary w-100" OnClick="btnIngresar_Click" />
+
+          <p class="text-center mt-3 mb-0">
+        ¿No tenés cuenta?
+        <asp:HyperLink ID="lnkRegistro" runat="server" NavigateUrl="Registro.aspx" Text="Registrate como cliente" />
+    </p>
 </div>
 
 </asp:Content>

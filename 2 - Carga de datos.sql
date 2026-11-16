@@ -7,7 +7,6 @@ INSERT INTO Rol (Nombre) VALUES ('Cliente');
 INSERT INTO Rol (Nombre) VALUES ('Tecnico');
 GO
 
-   ------------------------------------------------------------------------------------- */
 INSERT INTO Usuarios (Rol, Nombre, Mail, Pass, Telefono)
 VALUES (1, 'Admin Fixer', 'admin@fixer.com', '03ac674216f3e15c761ee1a5e255f067953623c8b388b4459e13f978d7c846f4', '1100000001');
 
@@ -85,6 +84,8 @@ INSERT INTO DetalleOrden (IDOrden, IDServicio, Cantidad, PrecioUnitario, TiempoU
 INSERT INTO DetalleOrden (IDOrden, IDServicio, Cantidad, PrecioUnitario, TiempoUnitario) VALUES (3, 5, 1, 15000, 120);
 GO
 
+USE DBFixer;
+
 SELECT * FROM Rol;
 SELECT IDUsuario, Rol, Nombre, Mail, Telefono FROM Usuarios;
 SELECT * FROM Tecnico;
@@ -93,4 +94,4 @@ SELECT * FROM Servicio;
 SELECT * FROM TecnicoServicio;
 SELECT * FROM OrdenTrabajo;
 SELECT * FROM DetalleOrden;
-GO
+
